@@ -451,9 +451,11 @@ uv run --locked --no-sync python -m pytest tests -m "not postgresql"   # SQLite
   (`exclude-newer`); Dependabot proposes the updates, after the same wait. Dependabot does not
   see the images of the end-to-end test (pretix's and Redis's, pinned by their digests in
   `e2e/run.sh` and the CI) nor PostgreSQL's binaries (pinned by their SHA-256 in
-  `scripts/postgres.py`). A new feature release of pretix is taken by hand: its group in
-  `pyproject.toml` (the oldest one dropped, with `compatibility` in `apps.py`), the CI's
-  matrices, its image's digest.
+  `scripts/postgres.py`), nor pretix itself, which it is told to ignore (it reads the three
+  groups of `pyproject.toml` as one dependency, and would move them all to the newest release).
+  pretix is taken by hand: a bugfix release in its group of `pyproject.toml`, then `uv lock`; a
+  new feature release as a new group (the oldest one dropped, with `compatibility` in
+  `apps.py`), the CI's matrices, its image's digest.
 
 ## Releases
 
