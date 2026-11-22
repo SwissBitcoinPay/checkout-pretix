@@ -75,8 +75,8 @@ test = [
 ]
 # The feature releases pretix publishes security fixes for (its release cycle: the last three),
 # each at its latest bugfix release.
-pretix-2026-7 = ["pretix==2026.7.4"]
-pretix-2026-8 = ["pretix==2026.8.2"]
+pretix-2026-7 = ["pretix==2026.9.1"]
+pretix-2026-8 = ["pretix==2026.9.1"]
 pretix-2026-9 = ["pretix==2026.9.1"]
 dev = [
     # The build's reader of the catalogs (scripts/translations.py).
