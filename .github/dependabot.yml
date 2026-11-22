@@ -25,6 +25,12 @@ updates:
     groups:
       dependencies:
         patterns: ["*"]
+    ignore:
+      # pyproject.toml's pretix-2026-7, -8 and -9 groups each pin one feature release of pretix,
+      # at its latest bugfix release: Dependabot reads them as one dependency and would move every
+      # group to the newest release (one PR proposed pretix 2026.9.1 for all three). They are
+      # updated by hand, with pretix's releases (README, "Development").
+      - dependency-name: pretix
     commit-message:
       prefix: build
 
