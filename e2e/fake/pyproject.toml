@@ -1,0 +1,19 @@
+# Test only: the sattle.me SDK faked inside pretix, for the plugin's end-to-end test (e2e/run.sh).
+# Installed beside pretix-sattleme in that test's pretix alone; never published, never shipped.
+[project]
+name = "pretix-sattleme-e2e"
+version = "1.0.0"
+description = "Test only: the sattle.me SDK faked inside pretix, for the end-to-end test of pretix-sattleme."
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = ["pretix-sattleme"]
+
+[project.entry-points."pretix.plugin"]
+pretix_sattleme_e2e = "pretix_sattleme_e2e:PretixPluginMeta"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pretix_sattleme_e2e"]

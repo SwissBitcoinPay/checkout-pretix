@@ -1,0 +1,16 @@
+recursive-include pretix_sattleme/static *
+recursive-include pretix_sattleme/templates *
+recursive-include pretix_sattleme/locale *
+# Compiled by the build (setup.py) from the catalogs, never shipped unseen.
+recursive-exclude pretix_sattleme/locale *.mo
+include LICENSE
+include README.md
+include CHANGELOG.md
+include SECURITY.md
+# The build compiles the translations with it.
+include scripts/translations.py
+recursive-include tests *.py
+# They read the SDK pinned in sdk/, which the sdist does not hold.
+exclude tests/test_sdk_pin.py
+exclude tests/test_price_vectors.py
+global-exclude *.py[cod] __pycache__

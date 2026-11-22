@@ -1,0 +1,11 @@
+{% load i18n %}
+{% if description %}
+    {{ description }}
+{% else %}
+    <p>
+        {% blocktrans trimmed %}
+            Pay with your Bitcoin wallet, in Lightning or, depending on the amount, on-chain.
+            Once you have confirmed your order, you get a QR code to scan with your wallet.
+        {% endblocktrans %}
+    </p>
+{% endif %}

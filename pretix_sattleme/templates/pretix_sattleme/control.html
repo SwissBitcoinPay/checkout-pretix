@@ -1,0 +1,96 @@
+{% load i18n %}
+<dl class="dl-horizontal">
+    <dt>{% trans "Reference" %}</dt>
+    <dd><code>{{ invoice.ref }}</code></dd>
+{% if not invoice.made %}
+    <dt>{% trans "Status" %}</dt>
+    <dd>
+        {% trans "no invoice made" %}
+        {% if error %}
+            <span class="text-danger">({% blocktrans with error=error %}failed: {{ error }}{% endblocktrans %})</span>
+        {% endif %}
+    </dd>
+{% else %}
+    <dt>{% trans "Amount" %}</dt>
+    <dd>{{ btc }} BTC ({{ sats }} sats)</dd>
+    {% if rate.price %}
+        <dt>{% trans "Exchange rate" %}</dt>
+        <dd>
+            1 BTC = {{ rate.price }} {{ rate.currency }}
+            <span class="text-muted">({{ rate.source }}, {{ rate_time|date:"SHORT_DATETIME_FORMAT" }})</span>
+        </dd>
+    {% endif %}
+    <dt>{% trans "Payable" %}</dt>
+    <dd>
+        {% if invoice.bolt11 %}{% trans "in Lightning" %}{% endif %}{% if invoice.bolt11 and address %}, {% endif %}{% if address %}{% trans "on-chain" %}{% endif %}
+    </dd>
+    {% if invoice.payment_hash %}
+        <dt>{% trans "Payment hash" %}</dt>
+        <dd><code>{{ invoice.payment_hash }}</code></dd>
+    {% endif %}
+    {% if address %}
+        <dt>{% trans "Bitcoin address" %}</dt>
+        <dd>
+            {% if address_link %}
+                <a href="https://mempool.space/address/{{ address }}" target="_blank" rel="noopener noreferrer"><code>{{ address }}</code></a>
+            {% else %}
+                <code>{{ address }}</code>
+            {% endif %}
+        </dd>
+    {% endif %}
+    <dt>{% trans "Created" %}</dt>
+    <dd>{{ created_at|date:"SHORT_DATETIME_FORMAT" }}</dd>
+    <dt>{% trans "Payable until" %}</dt>
+    <dd>{{ expires|date:"SHORT_DATETIME_FORMAT" }}</dd>
+    <dt>{% trans "Status" %}</dt>
+    <dd>
+        {% if state == "paid" %}
+            {% trans "paid" %}
+            {% if method == "lightning" %}({% trans "in Lightning" %}){% elif method == "onchain" %}({% trans "on-chain" %}){% elif method == "mixed" %}({% trans "on-chain and in Lightning" %}){% endif %}
+            {% if invoice.error == "changed" %}
+                <br><span class="text-danger">{% trans "Not confirmed: the order owed another amount when it was paid (see its history). Settle the difference with the customer, then confirm this payment by hand." %}</span>
+            {% endif %}
+        {% elif state == "unconfirmed" %}
+            {% trans "received, being confirmed on-chain" %}
+        {% elif state == "expired" %}
+            {% if invoice.received %}{% trans "ended underpaid" %}{% else %}{% trans "expired unpaid" %}{% endif %}
+            {% if awaits_organizer %}
+                <br><span class="text-danger">{% trans "Not confirmed: what came reached your wallet. Settle the difference with the customer, then confirm this payment by hand, or cancel it for the customer to pay again." %}</span>
+            {% endif %}
+        {% elif state == "open" %}
+            {% if invoice.received %}{% trans "partly paid, waiting for the rest" %}{% else %}{% trans "waiting for the payment" %}{% endif %}
+        {% else %}
+            {% trans "not checked yet" %}
+        {% endif %}
+    </dd>
+    {% if invoice.received %}
+        <dt>{% trans "Received" %}</dt>
+        <dd>{{ received_sats }} sats</dd>
+    {% endif %}
+    {% if confirmations is not None %}
+        <dt>{% trans "Confirmations" %}</dt>
+        <dd>{{ confirmations }}</dd>
+    {% endif %}
+    {% for txid in txids %}
+        <dt>{% if forloop.first %}{% trans "Transactions" %}{% endif %}</dt>
+        <dd><a href="https://mempool.space/tx/{{ txid }}" target="_blank" rel="noopener noreferrer"><code>{{ txid }}</code></a></dd>
+    {% endfor %}
+    {% for preimage in preimages %}
+        <dt>{% if forloop.first %}{% trans "Proof of payment" %}{% endif %}</dt>
+        <dd><code>{{ preimage }}</code></dd>
+    {% endfor %}
+    <dt>{% trans "Last check" %}</dt>
+    <dd>
+        {% if invoice.checked %}{{ invoice.checked|date:"SHORT_DATETIME_FORMAT" }}{% else %}–{% endif %}
+        {% if invoice.error == "abandoned" %}
+            <span class="text-danger">({% trans "its checks stopped: no final status after 90 days" %})</span>
+        {% elif error %}
+            <span class="text-danger">({% blocktrans with error=error %}failed: {{ error }}{% endblocktrans %})</span>
+        {% endif %}
+    </dd>
+    {% if not invoice.final %}
+        <dt>{% trans "Next check" %}</dt>
+        <dd>{{ invoice.next_check|date:"SHORT_DATETIME_FORMAT" }}</dd>
+    {% endif %}
+{% endif %}
+</dl>

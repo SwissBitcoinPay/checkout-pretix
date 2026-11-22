@@ -1,0 +1,4 @@
+[plugin]
+package = "pretix-sattleme"
+modules = [ "pretix_sattleme" ]
+marketplace_name = "sattleme"

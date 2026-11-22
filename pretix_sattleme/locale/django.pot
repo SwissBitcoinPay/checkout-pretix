@@ -1,0 +1,661 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-02 01:01+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: pretix_sattleme/apps.py
+msgid ""
+"Accept Bitcoin payments, in Lightning or on-chain, paid straight to your "
+"sattle.me wallet."
+msgstr ""
+
+#: pretix_sattleme/apps.py
+msgid "Payment"
+msgstr ""
+
+#: pretix_sattleme/apps.py pretix_sattleme/payment.py
+msgid "Bitcoin (sattle.me)"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid ""
+"the merchant's relays, its Lightning address, a source of exchange rates or "
+"a blockchain explorer did not answer"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "it took too long"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "the integration key is not valid"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "the integration was removed in the sattle.me app"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "the integration could not be found on its relays"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid ""
+"the merchant's Lightning address answered with an invoice that failed the "
+"checks"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid ""
+"the order's amount or currency was refused, or the invoice stored is not "
+"valid"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "no source of exchange rates prices the event's currency"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "no usable exchange rate could be found"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid ""
+"this amount can only be paid on-chain, and no deposit address of the "
+"integration was free"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid ""
+"the invoice would have ended after the order's deadline: a clock is off, the "
+"merchant's Lightning address's or this server's"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "the invoice handed out was not of the payment's price"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "pretix could not apply what the check found (see the server's log)"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "an unexpected error (see the server's log)"
+msgstr ""
+
+#: pretix_sattleme/display.py
+msgid "QR code of the Bitcoin payment"
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"The time to pay this order is almost over: it cannot be paid with Bitcoin."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"We could not create your Bitcoin invoice right now. Please try again in a "
+"moment."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid "This payment can no longer be made."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+#, python-brace-format
+msgid ""
+"An earlier Bitcoin invoice of this order can still be paid, until {time}: a "
+"new one can be made once it has ended."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"The time to pay an earlier Bitcoin invoice of this order is over, and its "
+"payment is being checked: a new one can be made once it is known to be "
+"unpaid."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"A Bitcoin payment of this order awaits the organizer: no other Bitcoin "
+"invoice can be made meanwhile. Please contact the organizer."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"A Bitcoin payment of this order has arrived and is being checked: no other "
+"Bitcoin invoice can be made meanwhile."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"This order cannot be paid with Bitcoin. Please choose another payment method."
+msgstr ""
+
+#: pretix_sattleme/invoices.py
+msgid ""
+"Bitcoin payments are not available right now. Please choose another payment "
+"method or contact the organizer."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"The Bitcoin invoice of this payment may still be paid: the payment can be "
+"canceled once the invoice's final status is known."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "This is not the secret key of a sattle.me integration (sattleme_ck_…)."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"This integration was removed in the sattle.me app. Create a new one and "
+"enter its key."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "This integration needs a newer version of the sattle.me plugin."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"This integration could not be found. Please check the key, or try again in a "
+"moment."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"This key could not be verified: the integration's relays or its Lightning "
+"address did not answer. Please try again in a moment."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "Bitcoin"
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"sattle.me has no test mode: in test mode too, payments are real bitcoin "
+"payments, to the organizer's wallet."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "Time to pay"
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"How many minutes the customer has to pay a Bitcoin invoice, from 1 to 60."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "Payment method name"
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"What the customer sees at checkout, on the order's page and in emails. "
+"Empty: “Bitcoin”."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "Payment process description during checkout"
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"Shown to the customer who chooses this payment method. Empty: how a Bitcoin "
+"payment goes, in the customer's language."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid "Integration key"
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"In the sattle.me app, create an integration for this shop and enter its "
+"secret key (sattleme_ck_…). Whoever holds it can create invoices that pay "
+"you, never spend your funds: keep it secret all the same. Change it only "
+"while no Bitcoin payment is pending: those are checked with the key set here."
+msgstr ""
+
+#: pretix_sattleme/payment.py
+msgid ""
+"To pay with Bitcoin, open your order with the link below: its payment page "
+"shows a QR code to scan with your Bitcoin wallet."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid "A Bitcoin invoice of {sats} sats was created for payment {local_id}."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"The Bitcoin invoice of {sats} sats made earlier for payment {local_id} was "
+"found again in the merchant's registry, and shown again."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid "No Bitcoin invoice could be created ({error})."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"A Bitcoin payment of {received} sats came, and is being confirmed on-chain."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"The Bitcoin invoice ended underpaid: {received} of {sats} sats came, and "
+"reached your wallet. Please settle the difference with the customer."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"The Bitcoin invoice of payment {local_id} was paid, {amount} ({received} "
+"sats), while the order owes {owed} now: it changed after the invoice was "
+"made. The payment was not confirmed: please settle the difference with the "
+"customer, then confirm it by hand."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"The Bitcoin invoice of payment {local_id} was paid with {received} sats, for "
+"an amount of {sats} sats: less is what the merchant accepted in the sattle."
+"me app (its tolerance, or by hand), more an overpayment."
+msgstr ""
+
+#: pretix_sattleme/signals.py
+#, python-brace-format
+msgid ""
+"The Bitcoin invoice of payment {local_id} had no final status after {days} "
+"days: its checks stopped. Please check this payment in the sattle.me app."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/checkout_payment_confirm.html
+msgid ""
+"After you confirm your order, you get a QR code to scan with your Bitcoin "
+"wallet. Please have your wallet ready: the invoice can be paid for a limited "
+"time only."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/checkout_payment_form.html
+msgid ""
+"Pay with your Bitcoin wallet, in Lightning or, depending on the amount, on-"
+"chain. Once you have confirmed your order, you get a QR code to scan with "
+"your wallet."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Reference"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Status"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "no invoice made"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+#, python-format
+msgid "failed: %(error)s"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Amount"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Exchange rate"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Payable"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "in Lightning"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "on-chain"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Payment hash"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Bitcoin address"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Created"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Payable until"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "paid"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "on-chain and in Lightning"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid ""
+"Not confirmed: the order owed another amount when it was paid (see its "
+"history). Settle the difference with the customer, then confirm this payment "
+"by hand."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "received, being confirmed on-chain"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "ended underpaid"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "expired unpaid"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid ""
+"Not confirmed: what came reached your wallet. Settle the difference with the "
+"customer, then confirm this payment by hand, or cancel it for the customer "
+"to pay again."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "partly paid, waiting for the rest"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "waiting for the payment"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "not checked yet"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Received"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Confirmations"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Transactions"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Proof of payment"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Last check"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "its checks stopped: no final status after 90 days"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/control.html
+msgid "Next check"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid "Pay with Bitcoin"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid "Pay order %(code)s with Bitcoin"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Scan this QR code with your Bitcoin wallet."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Open in my wallet"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid ""
+"We received %(received)s sats, less than the amount of this order. Please "
+"pay the remaining %(rest)s sats."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid ""
+"An invoice for the remaining amount is being prepared: it appears here in a "
+"moment."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Remaining amount"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Time left to pay"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid "(until %(time)s)"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Lightning invoice"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Copied"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Copy the Lightning invoice"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Copy the address"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid "To pay on-chain, send exactly %(amount)s BTC to this address."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "This page updates on its own as soon as your payment arrives."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid ""
+"A payment on-chain is confirmed by the Bitcoin network in about 30 minutes: "
+"once it has arrived, you can close this page."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid "Your payment has arrived: your order is being updated."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "You can close this page: your order's page shows its status."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid ""
+"Your Bitcoin payment has arrived, but your order changed after its invoice "
+"was made: the organizer settles the difference with you, then confirms your "
+"payment."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Your payment has arrived: it is being confirmed."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid ""
+"It is being confirmed by the Bitcoin network: %(count)s of 3 confirmations. "
+"This usually takes about 30 minutes, after which your order is marked as "
+"paid."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "The time to pay this invoice is over."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid ""
+"If you paid it in time, your payment is being checked: this page updates on "
+"its own."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+#, python-format
+msgid ""
+"This invoice ended before it was fully paid: we received %(received)s of "
+"%(sats)s sats. Please contact the organizer to settle the difference."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid ""
+"This invoice expired without being paid. You can pay again from your order's "
+"page."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid ""
+"This payment was canceled. Your order's page shows how to pay your order."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Back to your order"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pay.html
+msgid "Check the payment"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid "Your Bitcoin invoice is waiting for your payment."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+#, python-format
+msgid ""
+"To pay with another method, please wait until this invoice has ended, at "
+"%(time)s: it can be paid until then."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+#, python-format
+msgid ""
+"We received %(received)s sats, less than the amount of your order: please "
+"pay the rest."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid "Pay the rest with Bitcoin"
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid ""
+"Your Bitcoin payment has arrived. It is being confirmed by the Bitcoin "
+"network, which usually takes about 30 minutes: your order is then marked as "
+"paid."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid ""
+"The time to pay your Bitcoin invoice is over. If you paid it in time, your "
+"payment is being checked."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+#, python-format
+msgid ""
+"Your Bitcoin invoice ended before it was fully paid: we received "
+"%(received)s of %(sats)s sats. Please contact the organizer to settle the "
+"difference."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/pending.html
+msgid "Your Bitcoin invoice expired without being paid."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/settings.html
+#, python-format
+msgid ""
+"This event's currency, %(currency)s, is not one sattle.me prices orders in: "
+"the payment method is not offered to customers."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/settings.html
+#, python-format
+msgid ""
+"sattle.me prices orders in %(currency)s in whole units: the payment method "
+"is offered to customers only for amounts without decimals."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/settings.html
+msgid ""
+"Customers pay with a QR code: in Lightning, and on-chain from 1,000 sats "
+"when your integration has deposit addresses in the sattle.me app. The "
+"bitcoin goes straight to your sattle.me wallet."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/settings.html
+msgid ""
+"Payments are checked in the background: pretix's task workers and its "
+"periodic tasks must run. An on-chain payment counts once it has 3 "
+"confirmations, which takes about 30 minutes."
+msgstr ""
+
+#: pretix_sattleme/templates/pretix_sattleme/settings.html
+msgid ""
+"Refunds are not automatic: refund your customers from your wallet, then "
+"record the refund in pretix."
+msgstr ""

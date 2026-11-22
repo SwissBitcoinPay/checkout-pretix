@@ -1,0 +1,4 @@
+* text=auto eol=lf
+# The pinned copy of the SDK, hashed byte for byte (sdk/PIN.json, tests/test_sdk_pin.py): never
+# converted.
+sdk/** -text

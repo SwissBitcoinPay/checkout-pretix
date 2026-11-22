@@ -1,0 +1,57 @@
+{% load i18n %}
+{% if phase == "open" %}
+    <p>{% trans "Your Bitcoin invoice is waiting for your payment." %}</p>
+    <p>
+        <a href="{{ pay_url }}" class="btn btn-primary btn-lg">{% trans "Pay with Bitcoin" %}</a>
+    </p>
+    <p class="text-muted">
+        {% blocktrans trimmed with time=ends|date:"TIME_FORMAT" %}
+            To pay with another method, please wait until this invoice has ended, at {{ time }}:
+            it can be paid until then.
+        {% endblocktrans %}
+    </p>
+{% elif phase == "underpaid" %}
+    <p>
+        {% blocktrans trimmed with received=received_sats %}
+            We received {{ received }} sats, less than the amount of your order: please pay the
+            rest.
+        {% endblocktrans %}
+    </p>
+    <p>
+        <a href="{{ pay_url }}" class="btn btn-primary btn-lg">{% trans "Pay the rest with Bitcoin" %}</a>
+    </p>
+{% elif phase == "arrived" %}
+    <p>{% trans "Your payment has arrived: your order is being updated." %}</p>
+{% elif phase == "review" %}
+    <p>
+        {% blocktrans trimmed %}
+            Your Bitcoin payment has arrived, but your order changed after its invoice was made:
+            the organizer settles the difference with you, then confirms your payment.
+        {% endblocktrans %}
+    </p>
+{% elif phase == "unconfirmed" %}
+    <p>
+        {% blocktrans trimmed %}
+            Your Bitcoin payment has arrived. It is being confirmed by the Bitcoin network, which
+            usually takes about 30 minutes: your order is then marked as paid.
+        {% endblocktrans %}
+    </p>
+{% elif phase == "ended" %}
+    <p>
+        {% blocktrans trimmed %}
+            The time to pay your Bitcoin invoice is over. If you paid it in time, your payment is
+            being checked.
+        {% endblocktrans %}
+    </p>
+{% elif phase == "expired" %}
+    {% if invoice.received %}
+        <p>
+            {% blocktrans trimmed with received=received_sats sats=sats %}
+                Your Bitcoin invoice ended before it was fully paid: we received {{ received }} of
+                {{ sats }} sats. Please contact the organizer to settle the difference.
+            {% endblocktrans %}
+        </p>
+    {% else %}
+        <p>{% trans "Your Bitcoin invoice expired without being paid." %}</p>
+    {% endif %}
+{% endif %}

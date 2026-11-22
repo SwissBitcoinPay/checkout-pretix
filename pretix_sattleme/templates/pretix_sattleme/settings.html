@@ -1,0 +1,42 @@
+{% load i18n %}
+{% if not currency_usable %}
+<div class="alert alert-warning">
+    <p>
+        {% blocktrans trimmed %}
+            This event's currency, {{ currency }}, is not one sattle.me prices orders in: the
+            payment method is not offered to customers.
+        {% endblocktrans %}
+    </p>
+</div>
+{% elif whole_units_only %}
+<div class="alert alert-warning">
+    <p>
+        {% blocktrans trimmed %}
+            sattle.me prices orders in {{ currency }} in whole units: the payment method is
+            offered to customers only for amounts without decimals.
+        {% endblocktrans %}
+    </p>
+</div>
+{% endif %}
+<div class="alert alert-info">
+    <p>
+        {% blocktrans trimmed %}
+            Customers pay with a QR code: in Lightning, and on-chain from 1,000 sats when your
+            integration has deposit addresses in the sattle.me app. The bitcoin goes straight to
+            your sattle.me wallet.
+        {% endblocktrans %}
+    </p>
+    <p>
+        {% blocktrans trimmed %}
+            Payments are checked in the background: pretix's task workers and its periodic
+            tasks must run. An on-chain payment counts once it has 3 confirmations, which takes
+            about 30 minutes.
+        {% endblocktrans %}
+    </p>
+    <p>
+        {% blocktrans trimmed %}
+            Refunds are not automatic: refund your customers from your wallet, then record the
+            refund in pretix.
+        {% endblocktrans %}
+    </p>
+</div>

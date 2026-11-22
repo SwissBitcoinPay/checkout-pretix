@@ -1,0 +1,173 @@
+{% extends "pretixpresale/event/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load money %}
+{% block title %}{% trans "Pay with Bitcoin" %}{% endblock %}
+{% block custom_header %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "pretix_sattleme/pay.css" %}">
+    <script type="text/javascript" src="{% static "pretix_sattleme/pay.js" %}" defer></script>
+{% endblock %}
+{% block content %}
+    <div id="sattleme" class="panel panel-primary"
+         data-status-url="{{ status_url }}"
+         data-version="{{ version }}"
+         data-seconds-left="{{ seconds_left }}"
+         {% if poll_interval %}data-poll-interval="{{ poll_interval }}"{% endif %}>
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                {% blocktrans trimmed with code=order.code %}
+                    Pay order {{ code }} with Bitcoin
+                {% endblocktrans %}
+            </h3>
+        </div>
+        <div class="panel-body">
+            {% if phase == "open" or phase == "underpaid" %}
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 text-center">
+                        {% if uri %}
+                            {% if qr %}
+                                <a href="{{ uri }}" class="sattleme-qr">{{ qr }}</a>
+                                <p class="text-muted">{% trans "Scan this QR code with your Bitcoin wallet." %}</p>
+                            {% endif %}
+                            <p>
+                                <a href="{{ uri }}" class="btn btn-primary btn-block">
+                                    {% trans "Open in my wallet" %}
+                                </a>
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-7 col-sm-6">
+                        {% if phase == "underpaid" %}
+                            <div class="alert alert-warning">
+                                {% blocktrans trimmed with received=received_sats rest=to_pay_sats %}
+                                    We received {{ received }} sats, less than the amount of this order.
+                                    Please pay the remaining {{ rest }} sats.
+                                {% endblocktrans %}
+                            </div>
+                            {% if not uri %}
+                                <p>
+                                    {% trans "An invoice for the remaining amount is being prepared: it appears here in a moment." %}
+                                </p>
+                            {% endif %}
+                        {% endif %}
+                        <dl>
+                            <dt>{% if phase == "underpaid" %}{% trans "Remaining amount" %}{% else %}{% trans "Amount" %}{% endif %}</dt>
+                            <dd>
+                                <strong>{{ to_pay_btc }} BTC</strong> ({{ to_pay_sats }} sats)
+                                {% if phase == "open" %}
+                                    <br><span class="text-muted">{{ payment.amount|money:event.currency }}</span>
+                                {% endif %}
+                            </dd>
+                            <dt>{% trans "Time left to pay" %}</dt>
+                            <dd>
+                                <span id="sattleme-countdown">{{ time_left }}</span>
+                                <span class="text-muted">
+                                    {% blocktrans trimmed with time=expires|date:"TIME_FORMAT" %}
+                                        (until {{ time }})
+                                    {% endblocktrans %}
+                                </span>
+                            </dd>
+                        </dl>
+                        {% if lightning %}
+                            <p><strong>{% trans "Lightning invoice" %}</strong></p>
+                            <p class="sattleme-code" id="sattleme-lightning">{{ lightning }}</p>
+                            <p>
+                                <button type="button" class="btn btn-default btn-sm js-only"
+                                        data-sattleme-copy="sattleme-lightning"
+                                        data-copied="{% trans "Copied" %}">
+                                    {% trans "Copy the Lightning invoice" %}
+                                </button>
+                            </p>
+                        {% endif %}
+                        {% if address %}
+                            <p><strong>{% trans "Bitcoin address" %}</strong></p>
+                            <p class="sattleme-code" id="sattleme-address">{{ address }}</p>
+                            <p>
+                                <button type="button" class="btn btn-default btn-sm js-only"
+                                        data-sattleme-copy="sattleme-address"
+                                        data-copied="{% trans "Copied" %}">
+                                    {% trans "Copy the address" %}
+                                </button>
+                            </p>
+                            <p>
+                                {% blocktrans trimmed with amount=to_pay_btc %}
+                                    To pay on-chain, send exactly {{ amount }} BTC to this address.
+                                {% endblocktrans %}
+                            </p>
+                        {% endif %}
+                        <p class="text-muted">
+                            {% trans "This page updates on its own as soon as your payment arrives." %}
+                            {% if has_onchain %}
+                                {% trans "A payment on-chain is confirmed by the Bitcoin network in about 30 minutes: once it has arrived, you can close this page." %}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% elif phase == "arrived" %}
+                <div class="alert alert-info">
+                    {% trans "Your payment has arrived: your order is being updated." %}
+                </div>
+                <p class="text-muted">{% trans "You can close this page: your order's page shows its status." %}</p>
+            {% elif phase == "review" %}
+                <div class="alert alert-info">
+                    {% blocktrans trimmed %}
+                        Your Bitcoin payment has arrived, but your order changed after its invoice was made:
+                        the organizer settles the difference with you, then confirms your payment.
+                    {% endblocktrans %}
+                </div>
+                <p class="text-muted">{% trans "You can close this page: your order's page shows its status." %}</p>
+            {% elif phase == "unconfirmed" %}
+                <div class="alert alert-info">
+                    {% trans "Your payment has arrived: it is being confirmed." %}
+                </div>
+                <p>
+                    {% blocktrans trimmed with count=confirmations %}
+                        It is being confirmed by the Bitcoin network: {{ count }} of 3 confirmations.
+                        This usually takes about 30 minutes, after which your order is marked as paid.
+                    {% endblocktrans %}
+                </p>
+                <p class="text-muted">{% trans "You can close this page: your order's page shows its status." %}</p>
+            {% elif phase == "ended" %}
+                <p>{% trans "The time to pay this invoice is over." %}</p>
+                <p class="text-muted">
+                    {% trans "If you paid it in time, your payment is being checked: this page updates on its own." %}
+                </p>
+            {% elif phase == "expired" %}
+                {% if invoice.received %}
+                    <div class="alert alert-danger">
+                        {% blocktrans trimmed with received=received_sats sats=sats %}
+                            This invoice ended before it was fully paid: we received {{ received }} of {{ sats }} sats.
+                            Please contact the organizer to settle the difference.
+                        {% endblocktrans %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        {% trans "This invoice expired without being paid. You can pay again from your order's page." %}
+                    </div>
+                {% endif %}
+            {% elif phase == "canceled" %}
+                <div class="alert alert-info">
+                    {% trans "This payment was canceled. Your order's page shows how to pay your order." %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row checkout-button-row">
+        <div class="col-md-4">
+            <a class="btn btn-block btn-default btn-lg" href="{{ order_url }}">
+                {% trans "Back to your order" %}
+            </a>
+        </div>
+        {% if poll_interval %}
+            <noscript>
+                <div class="col-md-4 col-md-offset-4">
+                    <a class="btn btn-block btn-primary btn-lg" href="{{ check_url }}">
+                        {% trans "Check the payment" %}
+                    </a>
+                </div>
+            </noscript>
+        {% endif %}
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}

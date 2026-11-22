@@ -1,0 +1,162 @@
+[project]
+name = "pretix-sattleme"
+version = "1.0.0"
+description = "Bitcoin payments (Lightning and on-chain) for pretix with sattle.me: paid straight to the organizer's wallet."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+keywords = ["pretix", "bitcoin", "lightning", "payments", "sattleme"]
+authors = [
+    {name = "sattle.me"},
+]
+maintainers = [
+    {name = "sattle.me"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Intended Audience :: Other Audience",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial",
+]
+
+# pretix itself is not listed: a plugin is installed into the environment of a pretix
+# installation (see PretixPluginMeta.compatibility for the versions it supports).
+dependencies = [
+    # Semantic versioning: any 1.x release keeps the API this plugin uses, so updates within 1
+    # (bug and security fixes reach installations without a release of this plugin). The
+    # development and the CI run the copy pinned in sdk/ ([tool.uv.sources] below), which is
+    # never distributed.
+    "sattleme-checkout>=1.0,<2",
+    # Already a dependency of pretix, which pins its version.
+    "qrcode>=7.4",
+]
+
+[project.entry-points."pretix.plugin"]
+pretix_sattleme = "pretix_sattleme:PretixPluginMeta"
+
+[build-system]
+# setup.py: setuptools' build, with the translations compiled by scripts/translations.py.
+requires = [
+    "setuptools>=77",
+    "babel>=2.18",
+]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+homepage = "https://sattle.me"
+repository = "https://github.com/sattleme/checkout-pretix"
+changelog = "https://github.com/sattleme/checkout-pretix/blob/main/CHANGELOG.md"
+issues = "https://github.com/sattleme/checkout-pretix/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["pretix_sattleme*"]
+# Its directories of data (templates, static files, translations) are packages too.
+namespaces = true
+
+# uv.lock pins every package of these groups exactly, with its hashes, and the CI installs it as
+# it is: `dev` for the checks and the build (`uv sync --locked --no-install-project`), and for the
+# tests `test` with one of the pretix versions this plugin supports (`--group test --group
+# pretix-2026-9`), the plugin and its pinned SDK being built from the lockfile's tools.
+[dependency-groups]
+test = [
+    "pytest==9.2.0",
+    "pytest-django==4.14.0",
+]
+# The feature releases pretix publishes security fixes for (its release cycle: the last three),
+# each at its latest bugfix release.
+pretix-2026-7 = ["pretix==2026.7.4"]
+pretix-2026-8 = ["pretix==2026.8.2"]
+pretix-2026-9 = ["pretix==2026.9.1"]
+dev = [
+    # The build's reader of the catalogs (scripts/translations.py).
+    "babel==2.18.0",
+    "black==26.10.1",
+    "build==1.6.1",
+    # The build backend of the SDK pinned in sdk/ (its pyproject.toml).
+    "flit-core==4.2.0",
+    "check-manifest==0.51",
+    "flake8==7.5.0",
+    "isort==9.0.2",
+    "mypy==2.4.1",
+    # flake8's plugin of pretix's coding standard: the names (PEP 8).
+    "pep8-naming==0.15.1",
+    # scripts/check_dist.py: the wheel's requirements, compared.
+    "packaging==26.3",
+    "setuptools==84.2.1",
+]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["pretix_sattleme", "scripts", "tests", "setup.py", "e2e"]
+strict = true
+# pretix, Django and the packages around them ship no types: they are Any here, and the
+# plugin's classes derive from pretix's and Django's. The SDK is typed (py.typed).
+disallow_subclassing_any = false
+warn_unreachable = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+
+[[tool.mypy.overrides]]
+module = [
+    "celery.*",
+    "django.*",
+    "django_scopes.*",
+    "hierarkey.*",
+    "i18nfield.*",
+    "pretix.*",
+    "qrcode.*",
+    "setuptools.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# The tests: their bodies checked against the types of the plugin and of the SDK, their
+# functions and pytest's fixtures left unannotated.
+module = ["tests.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+check_untyped_defs = true
+
+[tool.black]
+# The SDK's own files, pinned as they are (scripts/pin_sdk.py).
+extend-exclude = "^/sdk/"
+
+[tool.uv]
+# The lockfile is the one source of the versions: `uv sync --locked` fails when it is out of date.
+# The CI's uv is exact (.github/ci-requirements.txt, with its hashes); this floor leaves room for
+# the uv Dependabot updates the lockfile with, which may be older than the CI's: 0.13.7 in
+# dependabot-core on 2026-11-21, which writes the same lockfile as the CI's 0.13.8.
+required-version = ">=0.12.18"
+# No version younger than a week is ever locked (Dependabot waits as long): time for a compromised
+# release to be found and yanked before it reaches this repository.
+exclude-newer = "7 days"
+# One version of pretix at a time in an environment.
+conflicts = [
+    [{ group = "pretix-2026-7" }, { group = "pretix-2026-8" }, { group = "pretix-2026-9" }],
+]
+# Built in the environment, with the build tools of the lockfile (their hashes checked), never in
+# an isolated one whose tools would be resolved apart from it: this plugin, the SDK of sdk/, and
+# the one dependency of pretix that PyPI has no wheel of.
+no-build-isolation-package = ["pretix-sattleme", "sattleme-checkout", "django-jquery-js"]
+
+# The metadata of that dependency, which its source distribution (Metadata-Version 1.1) does not
+# hold: so that uv never builds it to lock it. Its setup.py: install_requires=['Django>=1.4'].
+[[tool.uv.dependency-metadata]]
+name = "django-jquery-js"
+version = "3.1.1"
+requires-dist = ["Django>=1.4"]
+
+[tool.uv.sources]
+# The SDK, pinned in sdk/ (scripts/pin_sdk.py, sdk/PIN.json): no SDK is on a registry yet.
+sattleme-checkout = { path = "sdk" }

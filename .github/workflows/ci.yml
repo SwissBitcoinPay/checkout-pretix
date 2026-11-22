@@ -1,0 +1,157 @@
+name: CI
+
+# Every pull request and every push to main (and the release workflow, before it publishes): the
+# formatter, the import order, the linter, the types, the translations as GNU msgfmt compiles
+# them, the manifest, the build and what it holds on one job, from the lockfile; the tests against
+# each pretix version this plugin supports and each Python version, from the lockfile too (its
+# test groups), on SQLite, and on PostgreSQL, the database of pretix in production, whose row
+# locks some tests need; the end-to-end test on pretix's own Docker image of each of those
+# versions, without and with its Celery workers. Never the network in the tests: the SDK is faked.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # uv installs the lockfile as it is (`--locked`), on the interpreter setup-python gives: it never
+  # downloads one, and never upgrades anything.
+  UV_PYTHON_DOWNLOADS: never
+  UV_NO_CACHE: "1"
+  # Files copied into the environment, never cloned nor hard-linked.
+  UV_LINK_MODE: copy
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install GNU gettext (its msgfmt, compared with the build's translations)
+        run: sudo apt-get update && sudo apt-get install -y gettext
+      - name: Install uv (hashes of .github/ci-requirements.txt)
+        run: |
+          python -m pip install --require-hashes --only-binary :all: --no-deps -r .github/ci-requirements.txt
+      # The development tools, and the tests' for the types of their bodies.
+      - name: Install the lockfile
+        run: uv sync --locked --no-install-project --python "${{ steps.python.outputs.python-path }}" --group test
+      - name: Format
+        run: uv run --locked --no-sync black --check .
+      - name: Import order
+        run: uv run --locked --no-sync isort --check-only .
+      - name: Lint (pretix's coding standard)
+        run: uv run --locked --no-sync flake8 .
+      - name: Types
+        run: uv run --locked --no-sync mypy
+      - name: The translations, as GNU msgfmt compiles them
+        run: uv run --locked --no-sync python scripts/translations.py compare
+      - name: The manifest (the build tools of the lockfile, no isolation)
+        run: uv run --locked --no-sync check-manifest --no-build-isolation
+      - name: Build (the build tools of the lockfile, no isolation)
+        run: uv run --locked --no-sync python -m build --no-isolation --outdir dist .
+      - name: Check what was built
+        run: uv run --locked --no-sync python scripts/check_dist.py dist
+
+  tests:
+    name: Tests (pretix ${{ matrix.pretix }}, Python ${{ matrix.python }}, ${{ matrix.database }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each pretix version of the lockfile's groups (pyproject.toml), and each Python version
+        # they support: each version once, and each test on PostgreSQL once.
+        include:
+          - {python: "3.11", pretix: "2026.7", database: sqlite}
+          - {python: "3.12", pretix: "2026.8", database: sqlite}
+          - {python: "3.13", pretix: "2026.9", database: postgresql}
+          - {python: "3.14", pretix: "2026.9", database: sqlite}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install uv (hashes of .github/ci-requirements.txt)
+        run: |
+          python -m pip install --require-hashes --only-binary :all: --no-deps -r .github/ci-requirements.txt
+      # pretix, the tests' tools, the plugin and the SDK pinned in sdk/, all from the lockfile.
+      - name: Install the lockfile (pretix ${{ matrix.pretix }})
+        env:
+          GROUP: pretix-${{ matrix.pretix }}
+        run: uv sync --locked --python "${{ steps.python.outputs.python-path }}" --group test --group "${GROUP//./-}"
+      - name: Compile the translations
+        run: uv run --locked --no-sync python scripts/translations.py compile
+      - name: Start PostgreSQL (its binaries, pinned)
+        if: matrix.database == 'postgresql'
+        run: |
+          config="$(python scripts/postgres.py start "$RUNNER_TEMP/postgres")"
+          echo "PRETIX_CONFIG_FILE=$config" >> "$GITHUB_ENV"
+      - name: Run the tests (${{ matrix.database }})
+        # On GitHub Actions, pretix's test settings run the migrations (GITHUB_WORKFLOW). The
+        # tests of PostgreSQL's row locks run on PostgreSQL, and are deselected on SQLite.
+        env:
+          MARKERS: ${{ matrix.database == 'sqlite' && 'not postgresql' || '' }}
+        run: uv run --locked --no-sync python -m pytest tests ${MARKERS:+-m "$MARKERS"}
+      - name: Stop PostgreSQL
+        if: always() && matrix.database == 'postgresql'
+        run: python scripts/postgres.py stop "$RUNNER_TEMP/postgres"
+
+  e2e:
+    name: End to end (pretix ${{ matrix.pretix }}, its Docker image${{ matrix.celery && ', Celery' || '' }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # pretix's own image of each version the plugin supports, pinned by its digest: without
+        # task workers, and with Celery's (and Redis), as a production installation runs.
+        pretix: ["2026.7.4", "2026.8.2", "2026.9.1"]
+        celery: [false, true]
+        include:
+          - pretix: "2026.7.4"
+            image: pretix/standalone:2026.7.4@sha256:2922d79376e7aa47514b8e3fa2e3ec479fa19b224c7dc14c505a8944233a30f5
+          - pretix: "2026.8.2"
+            image: pretix/standalone:2026.8.2@sha256:7ad5d7be46ecc249c380a18946b27657258554050d93127ae1ca429ffaaaed19
+          - pretix: "2026.9.1"
+            image: pretix/standalone:2026.9.1@sha256:5e0ccb514c7f16ccf4cb26c060049ae38de160e646e9a80f866a9f1d705701dc
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install uv (hashes of .github/ci-requirements.txt)
+        run: |
+          python -m pip install --require-hashes --only-binary :all: --no-deps -r .github/ci-requirements.txt
+      # The build tools, for the wheels the test installs into pretix's image.
+      - name: Install the lockfile
+        run: uv sync --locked --no-install-project --python "${{ steps.python.outputs.python-path }}"
+      - name: The plugin, installed from its wheel into pretix, takes orders and their payments
+        env:
+          IMAGE: ${{ matrix.image }}
+          CELERY: ${{ matrix.celery && '--celery' || '' }}
+        run: e2e/run.sh ${CELERY:+"$CELERY"} "$IMAGE"
